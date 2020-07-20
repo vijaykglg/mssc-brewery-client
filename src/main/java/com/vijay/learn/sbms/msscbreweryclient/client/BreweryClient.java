@@ -7,6 +7,7 @@ Date    : 20 July 2020
 */
 
 import com.vijay.learn.sbms.msscbreweryclient.web.model.BeerDto;
+import com.vijay.learn.sbms.msscbreweryclient.web.model.CustomerDto;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Component
 public class BreweryClient {
     public final String BEER_PATH_V1 = "/api/v1/beer/";
+    public final String CUSTOMER_PATH_V1 = "/api/v1/customer/";
     private String apiHost;
 
     private final RestTemplate restTemplate;
@@ -36,14 +38,30 @@ public class BreweryClient {
     }
 
     public void updateBeer(UUID uuid, BeerDto beerDto){
-        restTemplate.put(apiHost + BEER_PATH_V1 + "/" + uuid.toString(), beerDto);
+        restTemplate.put(apiHost + BEER_PATH_V1 + uuid, beerDto);
     }
 
     public void deleteBeer(UUID uuid){
-        restTemplate.delete(apiHost + BEER_PATH_V1 + "/" + uuid );
+        restTemplate.delete(apiHost + BEER_PATH_V1 + uuid );
     }
 
     public void setApiHost(String apiHost) {
         this.apiHost = apiHost;
+    }
+
+    public CustomerDto getCustomerById(UUID customerId) {
+        return restTemplate.getForObject(apiHost+ CUSTOMER_PATH_V1 + customerId.toString(), CustomerDto.class);
+    }
+
+    public URI saveNewCustomer(CustomerDto customerDto) {
+        return  restTemplate.postForLocation(apiHost + CUSTOMER_PATH_V1, customerDto);
+    }
+
+    public void updateCustomer(UUID customerId, CustomerDto customerDto) {
+        restTemplate.put(apiHost + CUSTOMER_PATH_V1 + customerId, customerDto);
+    }
+
+    public void deleteCustomer(UUID customerId) {
+        restTemplate.delete(apiHost + CUSTOMER_PATH_V1 + customerId);
     }
 }
